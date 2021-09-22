@@ -1,10 +1,12 @@
 import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as route53 from "@aws-cdk/aws-route53";
-import * as apigateway from "@aws-cdk/aws-apigateway";
-import {NodejsFunction} from '@aws-cdk/aws-lambda-nodejs';
+import * as apigatewayv2 from "@aws-cdk/aws-apigatewayv2";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambdanodejs from "@aws-cdk/aws-lambda-nodejs";
+import * as integrations from "@aws-cdk/aws-apigatewayv2-integrations";
 
-import * as path from 'path';
+import * as path from "path";
 
 const params = {
   projectName: "mercurial",
@@ -43,8 +45,17 @@ export class MercurialProStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "UserPoolOutput", { value: userPool.userPoolId });
 
+    const api = new apigatewayv2.HttpApi(this, "HttpApi", {});
 
-new apigateway.
+    const hwFunction = new lambdanodejs.NodejsFunction(this, "HolaMundoFunction", {
+      entry: path.join(__dirname, "../../functions/hello-world/index.ts"),
+    });
+    api.addRoutes({
+      methods: [apigatewayv2.HttpMethod.GET],
+      path: "/hw",
+      integration: new integrations.LambdaProxyIntegration({ handler: hwFunction }),
+    });
 
+    new cdk.CfnOutput(this, "HttpApiOutput", { value: api.apiEndpoint });
   }
 }
