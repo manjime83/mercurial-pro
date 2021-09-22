@@ -2,6 +2,9 @@ import * as cdk from "@aws-cdk/core";
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as apigateway from "@aws-cdk/aws-apigateway";
+import {NodejsFunction} from '@aws-cdk/aws-lambda-nodejs';
+
+import * as path from 'path';
 
 const params = {
   projectName: "mercurial",
